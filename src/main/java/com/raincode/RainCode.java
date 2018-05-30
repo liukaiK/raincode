@@ -2,15 +2,27 @@ package com.raincode;
 
 import java.awt.*;
 import java.util.Random;
-import javax.swing.JFrame;
+import javax.swing.*;
 
 class RainCanvas extends Canvas implements Runnable {
 
     private int width, height;
-    private Image offScreen; // 缓冲图片
-    private char[][] charset; // 随机字符集合
-    private int[] pos; // 列的起始位置
-    private Color[] colors = new Color[30]; // 列的渐变颜色
+    /**
+     * 缓冲图片
+     */
+    private Image offScreen;
+    /**
+     * 随机字符集合
+     */
+    private char[][] charset;
+    /**
+     * 列的起始位置
+     */
+    private int[] pos;
+    /**
+     * 列的渐变颜色
+     */
+    private Color[] colors = new Color[30];
 
     RainCanvas(int width, int height) {
         this.width = width;
@@ -41,7 +53,7 @@ class RainCanvas extends Canvas implements Runnable {
         setVisible(true);
     }
 
-    public void startRain() {
+    void startRain() {
         new Thread(this).start();
     }
 
@@ -50,14 +62,12 @@ class RainCanvas extends Canvas implements Runnable {
         if (offScreen == null) {
             return;
         }
-        Random rand = new Random();
         Graphics g = offScreen.getGraphics();
         g.clearRect(0, 0, width, height);
         g.setFont(new Font("Arial", Font.PLAIN, 14));
 
 
         for (int i = 0; i < charset.length; i++) {
-            int speed = rand.nextInt(3);
             for (int j = 0; j < colors.length; j++) {
                 int index = (pos[i] + j) % charset[i].length;
                 g.setColor(colors[j]);
@@ -79,10 +89,12 @@ class RainCanvas extends Canvas implements Runnable {
             repaint();
 
             try {
-                Thread.sleep(50); // 可改变睡眠时间以调节速度
+                /*
+                可改变睡眠时间以调节速度
+                 */
+                Thread.sleep(50);
             } catch (InterruptedException e) {
-                System.out.println(e);
-
+                e.printStackTrace();
             }
         }
     }
@@ -97,18 +109,18 @@ class RainCanvas extends Canvas implements Runnable {
     }
 }
 
-public class RainCode extends JFrame {
+class RainCode extends JFrame {
 
-    public RainCanvas canvas = new RainCanvas(1366, 768);
+    RainCanvas canvas;
 
-    public RainCode() {
+    RainCode() {
         super("代码雨");
         setUndecorated(true);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setVisible(true);
         canvas = new RainCanvas(this.getWidth(), this.getHeight());
         getContentPane().add(canvas);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
     }
 
